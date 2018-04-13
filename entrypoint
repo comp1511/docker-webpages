@@ -1,26 +1,62 @@
 #!/bin/bash
-#set -x
+
 unset DEBIAN_FRONTEND
 
-cd /root || exit 1
-export PATH=$PATH:/home/cs1511/public_html18s1//scripts:.
+repo=https://github.com/COMP1511UNSW/course_materials.git
+repo_dir=private
+git_clone_command="git clone $repo private"
+mount_point=/root
 
-if test ! -d private
+cd $mount_point || exit 1
+export PATH=$PATH:/home/cs1511/public_html/18s1//scripts:.
+
+
+
+if test ! -d "$mount_point/$repo_dir/.git/"
 then 
     cat <<eof
     
-Directory /root/private not found/
-You need to clone the repo into the directory private
-and mount the parent directory of the repo on /root for example:
+$mount_point/$repo_dir/.git/ does not exist.
 
-mkdir -m 700 website
-cd website
-git clone  git@github.com:COMP1511UNSW/course_materials.git private
-docker run -it -v `pwd`:/root -p 5000:5000 comp1511/webpages
+Run $git_clone_command? [no]
+
 eof
-	exit 1
+
+	read answer
+	
+	case "$answer" in
+	[yY]*)
+		echo "$git_clone_command"
+		$git_clone_command
+		;;
+	*)
+		cat <<eof
+	
+Your repo should be in a directory named private.
+Docker should be run with the parent of this directory mounted on /root
+and port 5000 exposed.
+
+For example if your repo is /home/chris/website/private run
+docker run -it -v /home/chris/website/:$mount_point -p 5000:5000 comp1511/webpages
+
+eof
+	esac
+else
+	cd $mount_point/$repo_dir/
+	echo "git pull?"
+	case "$answer" in
+	[yY]*)
+		git pull
+		;;
+	esac
 fi
 
-cd private
-scripts/build
-while sleep 1;do flask/webpages.py; done
+if test -d $mount_point/$repo_dir/.git/
+then
+	cd $mount_point/$repo_dir/
+	echo scripts/build
+	scripts/build
+	echo "while sleep 1;do flask/webpages.py; done &"
+	while sleep 1;do flask/webpages.py; done &
+fi
+bash -l

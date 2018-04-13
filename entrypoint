@@ -19,7 +19,8 @@ then
 $mount_point/$repo_dir/.git/ does not exist.
 
 eof
-echo -n "clone repository? [no]
+
+echo -n "clone repository? [no] "
 
 	read answer
 	case "$answer" in

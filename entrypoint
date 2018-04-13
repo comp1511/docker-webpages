@@ -18,9 +18,8 @@ then
     
 $mount_point/$repo_dir/.git/ does not exist.
 
-Run $git_clone_command? [no]
-
 eof
+echo -n "clone repository? [no]
 
 	read answer
 	case "$answer" in
@@ -42,7 +41,7 @@ eof
 	esac
 else
 	cd $mount_point/$repo_dir/
-	echo "git pull?"
+	echo -n "git pull?"
 	read answer
 	case "$answer" in
 	[yY]*)

@@ -23,7 +23,6 @@ Run $git_clone_command? [no]
 eof
 
 	read answer
-	
 	case "$answer" in
 	[yY]*)
 		echo "$git_clone_command"
@@ -44,6 +43,7 @@ eof
 else
 	cd $mount_point/$repo_dir/
 	echo "git pull?"
+	read answer
 	case "$answer" in
 	[yY]*)
 		git pull
